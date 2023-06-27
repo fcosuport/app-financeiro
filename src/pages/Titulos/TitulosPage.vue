@@ -104,6 +104,58 @@
             class="q-mr-sm"
           />
         </div>
+        <div class="row q-gutter-sm q-mt-sm">
+          <q-select
+            outlined
+            dense
+            options-dense
+            v-model="opData"
+            :options="optionsData"
+            map-options
+            emit-value
+            label="Opções de Data"
+            style="width: 150px"
+            class="q-mr-sm"
+          />
+          <q-input outlined dense v-model="datainicial" mask="##/##/####" label="Data Inicial">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="datainicial" today-btn mask="DD/MM/YYYY">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Ok" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+          <q-input outlined dense v-model="datafinal" mask="##/##/####" label="Data Final">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="datafinal" today-btn mask="DD/MM/YYYY">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Ok" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+          <q-select
+            outlined
+            dense
+            options-dense
+            v-model="ordenar"
+            :options="optionsOrdenar"
+            map-options
+            emit-value
+            label="Ordenar"
+            style="width: 150px"
+            class="q-mr-sm"
+          />
+        </div>
       </div>
     </template>
       <template v-slot:body-cell-status="props">
@@ -159,6 +211,8 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const $q = useQuasar()
+    const datainicial = ref('')
+    const datafinal = ref('')
     const stringOptions = ref([])
     const optionsCliente = ref([])
     const selectedcliente = ref('')
@@ -169,6 +223,10 @@ export default defineComponent({
     const formapagamento = ref({ label: 'Todos', value: 0 })
     const status = ref('Todos')
     const optionsStatus = ['Todos', 'PAGO', 'ABERTO']
+    const optionsData = ['Todos', 'Emissao', 'Vencimento', 'Pagamento']
+    const opData = ref('Todos')
+    const optionsOrdenar = ['Cliente', 'Emissao', 'Vencimento']
+    const ordenar = ref('Cliente')
     const { listarComFiltros: listarTitulos, cancelar } = titulosService()
     const { listar: listarClientes } = clientesService()
     const { listar: listarFormasPagamento } = formaPagamentoService()
@@ -227,6 +285,20 @@ export default defineComponent({
 
     const getTitulos = async () => {
       try {
+        if (opData.value !== 'Todos') {
+          if (datainicial.value === '' || datafinal.value === '') {
+            $q.notify({
+              message: 'Selecione as datas para a pesquisa',
+              icon: 'warning',
+              color: 'warning',
+              type: 'warning',
+              position: 'top',
+              timeout: 1000
+            })
+            return false
+          }
+        }
+
         cliente.value = 0
         if (selectedcliente.value > 0) {
           cliente.value = selectedcliente.value
@@ -236,7 +308,25 @@ export default defineComponent({
           numparcela.value = 0
         }
 
-        const filtros = `cliente=${cliente.value}&formapagamento=${formapagamento.value.value}&status=${status.value}&numparcela=${numparcela.value}`
+        // const filtros = `cliente=${cliente.value}&formapagamento=${formapagamento.value.value}&status=${status.value}&numparcela=${numparcela.value}`
+        let filtros = 'cliente=' + cliente.value +
+              '&formapagamento=' + formapagamento.value.value +
+              '&status=' + status.value +
+              '&numparcela=' + numparcela.value +
+              '&opcaodata=' + opData.value
+
+        if (opData.value !== 'Todos') {
+          const dataInicialParts = datainicial.value.split('/')
+          const dtinicial = `${dataInicialParts[2]}-${dataInicialParts[1]}-${dataInicialParts[0]}`
+
+          const dataFinalParts = datafinal.value.split('/')
+          const dtfinal = `${dataFinalParts[2]}-${dataFinalParts[1]}-${dataFinalParts[0]}`
+          filtros += '&datainicial=' + dtinicial +
+             '&datafinal=' + dtfinal
+        }
+
+        filtros += '&ordenar=' + ordenar.value
+
         const data = await listarTitulos(filtros)
         titulos.value = data
       } catch (error) {
@@ -309,12 +399,18 @@ export default defineComponent({
       optionsFormaPagamento,
       formapagamento,
       optionsStatus,
+      optionsData,
+      optionsOrdenar,
+      opData,
       status,
+      ordenar,
       selectedcliente,
       optionsCliente,
       stringOptions,
       cliente,
       numparcela,
+      datainicial,
+      datafinal,
 
       filterFn (val, update) {
         if (val.length < 2) {
