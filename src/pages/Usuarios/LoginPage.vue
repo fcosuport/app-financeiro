@@ -8,8 +8,24 @@
             <div class="text-grey-8">Entre com Usuario e Senha</div>
           </q-card-section>
           <q-card-section>
-            <q-input dense outlined v-model="form.nome" label="Usuario"></q-input>
-            <q-input dense outlined class="q-mt-md" v-model="form.senha" type="password" label="Senha"></q-input>
+            <q-input
+              dense
+              outlined
+              v-model="form.nome"
+              label="Usuario"
+              :rules="[val => (val && val.length > 0) || 'Nome is required']"
+            >
+            </q-input>
+            <q-input
+              dense
+              outlined
+              class="q-mt-md"
+              v-model="form.senha"
+              type="password"
+              label="Senha"
+              :rules="[val => (val && val.length > 0) || 'Senha is required']"
+            >
+            </q-input>
           </q-card-section>
           <q-card-section>
             <q-btn
@@ -47,11 +63,26 @@ export default defineComponent({
 
     const Login = async () => {
       try {
-        await logar(form.value)
-        $q.notify({ message: 'Login efetuado com sucesso!', icon: 'check_circle_outline', type: 'positive', color: 'positive', timeout: 500 })
-        router.push({ name: 'DashboardPage' })
+        const response = await logar(form.value)
+        const { data, status } = response
+        console.log(data)
+        console.log(status)
+        if (status === 200) {
+          $q.notify({ message: 'Login efetuado com sucesso!', icon: 'check_circle_outline', type: 'positive', color: 'positive', timeout: 500 })
+          router.push({ name: 'DashboardPage' })
+        }
       } catch (error) {
-
+        $q.dialog({
+          dark: true,
+          title: 'Falha no Login',
+          message: error.message
+        }).onOk(() => {
+        // console.log('OK')
+        }).onCancel(() => {
+        // console.log('Cancel')
+        }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+        })
       }
     }
 

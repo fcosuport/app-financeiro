@@ -57,10 +57,15 @@ export default function useApi (url) {
 
   const logar = async (form) => {
     try {
-      const { data } = await api.post(url, form)
-      return data
+      const response = await api.post(url, form)
+      return response
     } catch (error) {
-      throw new Error(error)
+      if (error.response && error.response.status === 400) {
+        const { mensagem } = error.response.data
+        throw new Error(mensagem)
+      } else {
+        throw new Error(error)
+      }
     }
   }
 
