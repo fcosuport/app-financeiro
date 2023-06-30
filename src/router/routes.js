@@ -1,10 +1,20 @@
 const routes = [
   {
     path: '/',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      { path: '', name: 'loginDefault', component: () => import('pages/Usuarios/LoginPage.vue') },
+      { path: 'login', name: 'login', component: () => import('pages/Usuarios/LoginPage.vue') }
+    ]
+  },
+  {
+    path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'DashboardPage', component: () => import('pages/DashboardPage.vue') },
+      { path: 'dashboard', name: 'DashboardPage', component: () => import('pages/DashboardPage.vue') },
       { path: 'titulos', name: 'TitulosPage', component: () => import('pages/Titulos/TitulosPage.vue') },
+      { path: 'cadtitulos', name: 'CadTitulos', component: () => import('pages/Titulos/CadTitulos.vue') },
+      { path: 'titulos/:id?', name: 'AltTitulos', component: () => import('pages/Titulos/AltTitulos.vue') },
       { path: 'assinaturas', name: 'AssinaturasPage', component: () => import('pages/Assinaturas/AssinaturasPage.vue') },
       { path: 'assinaturas/:id?', name: 'CadAssinaturas', component: () => import('pages/Assinaturas/CadAssinaturas.vue') },
       { path: 'clientes', name: 'ClientesPage', component: () => import('pages/Clientes/ClientesPage.vue') },
@@ -17,7 +27,6 @@ const routes = [
       { path: 'cadformaspagamento/:id?', name: 'CadFormasPagamento', component: () => import('pages/FormasPagamento/CadFormasPagamento.vue') }
     ]
   },
-
   // Always leave this as last one,
   // but you can also remove it
   {

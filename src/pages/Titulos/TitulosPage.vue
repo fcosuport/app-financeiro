@@ -359,7 +359,7 @@ export default defineComponent({
     }
 
     const alterarTitulos = (id) => {
-      router.push({ name: 'CadTitulos', params: { id } })
+      router.push({ name: 'AltTitulos', params: { id } })
     }
 
     const cancelarTitulos = (id) => {

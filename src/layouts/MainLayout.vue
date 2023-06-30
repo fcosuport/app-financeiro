@@ -15,7 +15,18 @@
           App Financeiro
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn-dropdown color="indigo-10" label="Francisco" unelevated>
+          <q-list>
+            <q-item clickable v-close-popup @click="onSair">
+              <q-item-section avatar>
+                 <q-avatar icon="logout" color="primary" text-color="white" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Sair</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
@@ -80,6 +91,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import { useRouter } from 'vue-router'
 
 const linksList = [
   {
@@ -116,9 +128,15 @@ export default defineComponent({
   },
 
   setup () {
+    const router = useRouter()
     const leftDrawerOpen = ref(false)
 
+    const onSair = () => {
+      router.replace({ name: 'login' })
+    }
+
     return {
+      onSair,
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer () {

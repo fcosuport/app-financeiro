@@ -55,12 +55,22 @@ export default function useApi (url) {
     }
   }
 
+  const logar = async (form) => {
+    try {
+      const { data } = await api.post(url, form)
+      return data
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
   return {
     listar,
     listarComFiltros,
     selecionarId,
     cadastrar,
     alterar,
-    cancelar
+    cancelar,
+    logar
   }
 }
