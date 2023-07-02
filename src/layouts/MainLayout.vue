@@ -15,7 +15,7 @@
           App Financeiro
         </q-toolbar-title>
 
-        <q-btn-dropdown color="indigo-10" label="Francisco" unelevated>
+        <q-btn-dropdown color="indigo-10" :label="userName" unelevated>
           <q-list>
             <q-item clickable v-close-popup @click="onSair">
               <q-item-section avatar>
@@ -89,9 +89,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from 'src/stores/auth'
 
 const linksList = [
   {
@@ -130,13 +131,17 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const leftDrawerOpen = ref(false)
+    const authStore = useAuthStore()
+    const userName = computed(() => authStore.userName)
 
     const onSair = () => {
       router.replace({ name: 'login' })
+      authStore.clearAuthData()
     }
 
     return {
       onSair,
+      userName,
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer () {

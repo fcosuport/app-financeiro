@@ -49,6 +49,7 @@ import { defineComponent, ref } from 'vue'
 import usuariosService from 'src/Services/Usuarios'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
 
 export default defineComponent({
   name: 'LoginPage',
@@ -65,9 +66,15 @@ export default defineComponent({
       try {
         const response = await logar(form.value)
         const { data, status } = response
-        console.log(data)
-        console.log(status)
         if (status === 200) {
+          const token = data.token
+          const tokenParts = token.split('.')
+          // const decodedHeader = JSON.parse(atob(tokenParts[0]))
+          const decodedPayload = JSON.parse(atob(tokenParts[1]))
+          const userName = decodedPayload.unique_name
+          const authStore = useAuthStore()
+          authStore.setToken(token)
+          authStore.setUserName(userName)
           $q.notify({ message: 'Login efetuado com sucesso!', icon: 'check_circle_outline', type: 'positive', color: 'positive', timeout: 500 })
           router.push({ name: 'DashboardPage' })
         }
