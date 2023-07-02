@@ -25,7 +25,8 @@ const routes = [
       { path: 'planos/:id?', name: 'CadPlanos', component: () => import('pages/Planos/CadPlanos.vue') },
       { path: 'formaspagamento', name: 'FormasPagamentoPage', component: () => import('pages/FormasPagamento/FormasPagamentoPage.vue') },
       { path: 'cadformaspagamento/:id?', name: 'CadFormasPagamento', component: () => import('pages/FormasPagamento/CadFormasPagamento.vue') }
-    ]
+    ],
+    meta: { requiresAuth: true }
   },
   // Always leave this as last one,
   // but you can also remove it
