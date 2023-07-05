@@ -37,6 +37,7 @@
               type="submit"
             >
             </q-btn>
+            <div class="row justify-center text-h6 text-weight-bold" v-if="isLoading">Carregando...</div>
           </q-card-section>
         </q-card>
       </div>
@@ -57,6 +58,7 @@ export default defineComponent({
     const { logar } = usuariosService()
     const router = useRouter()
     const $q = useQuasar()
+    const isLoading = ref(false)
     const form = ref({
       nome: '',
       senha: ''
@@ -64,6 +66,7 @@ export default defineComponent({
 
     const Login = async () => {
       try {
+        isLoading.value = true
         const response = await logar(form.value)
         const { data, status } = response
         if (status === 200) {
@@ -90,12 +93,15 @@ export default defineComponent({
         }).onDismiss(() => {
         // console.log('I am triggered on both OK and Cancel')
         })
+      } finally {
+        isLoading.value = false
       }
     }
 
     return {
       form,
-      Login
+      Login,
+      isLoading
     }
   }
 })
