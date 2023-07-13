@@ -95,6 +95,31 @@
             class="col-md-2 col-xs-12 col-sm-12"
             :rules="[val => (val !== null && val !== '') || 'Valor é Obrigatório', val => (val > 0) || 'Valor não pode ser zero']"
           />
+          <q-input outlined v-model="form.dtPrimeiraParcela" mask="##/##/####" label="Venc da 1º na GN">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="form.dtPrimeiraParcela" today-btn mask="DD/MM/YYYY">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Ok" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+          <q-input
+            outlined
+            label="Cod Assinatura GN"
+            v-model="form.codAssinatura"
+            class="col-md-3 col-xs-12 col-sm-12"
+          />
+          <q-input
+            outlined
+            label="Nome no Whatsapp"
+            v-model="form.nomeWhats"
+            class="col-md-5 col-xs-12 col-sm-12"
+          />
           <q-input
             outlined
             dense
@@ -183,6 +208,9 @@ export default defineComponent({
       formaPagamentoId: null,
       diaVencimento: '',
       valor: '',
+      dtPrimeiraParcela: null,
+      codAssinatura: '',
+      nomeWhats: '',
       dtcadastro: null,
       dtcancelamento: null,
       cancelado: false
@@ -203,6 +231,7 @@ export default defineComponent({
         const response = await selecionarId(id)
         form.value = response
         form.value.dtcadastro = date.formatDate(form.value.dtcadastro, 'DD/MM/YYYY HH:mm:ss')
+        form.value.dtPrimeiraParcela = date.formatDate(form.value.dtPrimeiraParcela, 'DD/MM/YYYY')
         if (form.value.cancelado === true) {
           form.value.dtcancelamento = date.formatDate(form.value.dtcancelamento, 'DD/MM/YYYY HH:mm:ss')
         } else {
@@ -257,6 +286,8 @@ export default defineComponent({
 
     const onSubmit = async () => {
       try {
+        const dtPrimeiraParcParts = form.value.dtPrimeiraParcela.split('/')
+        const dtprimeiraparc = `${dtPrimeiraParcParts[2]}-${dtPrimeiraParcParts[1]}-${dtPrimeiraParcParts[0]}`
         if (form.value.id) {
           const dados = {
             id: form.value.id,
@@ -265,7 +296,10 @@ export default defineComponent({
             planoId: selectedPlano.value,
             formapagamentoId: selectedFormaPagamento.value,
             diaVencimento: form.value.diaVencimento,
-            valor: form.value.valor
+            valor: form.value.valor,
+            DtPrimeiraParcela: dtprimeiraparc,
+            CodAssinatura: form.value.codAssinatura,
+            NomeWhats: form.value.nomeWhats
           }
           await alterar(dados)
         } else {
@@ -277,6 +311,9 @@ export default defineComponent({
             formapagamentoId: selectedFormaPagamento.value,
             diaVencimento: form.value.diaVencimento,
             valor: form.value.valor,
+            DtPrimeiraParcela: dtprimeiraparc,
+            CodAssinatura: form.value.codAssinatura,
+            NomeWhats: form.value.nomeWhats,
             dtcadastro: dataatual
           }
           await cadastrar(dados)
