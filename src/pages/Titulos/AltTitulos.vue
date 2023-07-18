@@ -110,7 +110,7 @@ import { defineComponent, ref, onMounted } from 'vue'
 import TitulosService from 'src/Services/Titulos'
 import clientesService from 'src/Services/Clientes'
 import formaPagamentoService from 'src/Services/FormasPagamento'
-import { useQuasar, date } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useRouter, useRoute } from 'vue-router'
 
 export default defineComponent({
@@ -151,8 +151,14 @@ export default defineComponent({
       try {
         const response = await selecionarId(id)
         form.value = response
-        form.value.emissao = date.formatDate(form.value.emissao, 'DD/MM/YYYY')
-        form.value.vencimento = date.formatDate(form.value.vencimento, 'DD/MM/YYYY')
+        const emissaoDateObject = new Date(form.value.emissao)
+        const adjustedEmissao = new Date(emissaoDateObject.getTime() + emissaoDateObject.getTimezoneOffset() * 60 * 1000)
+        form.value.emissao = adjustedEmissao.toLocaleDateString('pt-BR')
+        // form.value.vencimento = date.formatDate(form.value.vencimento, 'DD/MM/YYYY')
+        const vencimentoDateObject = new Date(form.value.vencimento)
+        const adjustedVencimento = new Date(vencimentoDateObject.getTime() + vencimentoDateObject.getTimezoneOffset() * 60 * 1000)
+        // Atribua a data ajustada ao modelo form.vencimento
+        form.value.vencimento = adjustedVencimento.toLocaleDateString('pt-BR')
         selectedcliente.value = form.value.clienteId
         selectedFormaPagamento.value = form.value.formaPagamentoId
       } catch (error) {

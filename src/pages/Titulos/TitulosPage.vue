@@ -238,9 +238,49 @@ export default defineComponent({
 
     const columns = [
       { name: 'id', field: 'id', label: 'Titulo', align: 'left', sortable: true },
-      { name: 'emissao', field: 'emissao', label: 'Emissão', format: val => date.formatDate(val, 'DD/MM/YYYY'), align: 'left', sortable: true },
+      {
+        name: 'emissao',
+        field: 'emissao',
+        label: 'Emissão',
+        // format: val => date.formatDate(val, 'DD/MM/YYYY'),
+        format: val => {
+          // Converta a string da data para um objeto Date
+          const dateObject = new Date(val)
+
+          // Faça o ajuste de fuso horário adicionando a parte do timezone na string da data
+          // e depois remova o timezone antes de formatá-la
+          const adjustedDate = new Date(dateObject.getTime() + dateObject.getTimezoneOffset() * 60 * 1000)
+
+          // Formate a data para o padrão 'DD/MM/YYYY'
+          const formattedDate = adjustedDate.toLocaleDateString('pt-BR')
+
+          return formattedDate
+        },
+        align: 'left',
+        sortable: true
+      },
       { name: 'clienteRazao', field: 'clienteRazao', label: 'Razão Social', align: 'left', sortable: true },
-      { name: 'vencimento', field: 'vencimento', label: 'Vencimento', format: val => date.formatDate(val, 'DD/MM/YYYY'), align: 'left', sortable: true },
+      {
+        name: 'vencimento',
+        field: 'vencimento',
+        label: 'Vencimento',
+        // format: val => date.formatDate(val, 'DD/MM/YYYY'),
+        format: val => {
+          // Converta a string da data para um objeto Date
+          const dateObject = new Date(val)
+
+          // Faça o ajuste de fuso horário adicionando a parte do timezone na string da data
+          // e depois remova o timezone antes de formatá-la
+          const adjustedDate = new Date(dateObject.getTime() + dateObject.getTimezoneOffset() * 60 * 1000)
+
+          // Formate a data para o padrão 'DD/MM/YYYY'
+          const formattedDate = adjustedDate.toLocaleDateString('pt-BR')
+
+          return formattedDate
+        },
+        align: 'left',
+        sortable: true
+      },
       { name: 'valor', field: 'valor', label: 'Valor', format: (val) => val.toFixed(2), align: 'left', sortable: true },
       { name: 'status', field: 'status', label: 'Status', align: 'left', sortable: true },
       { name: 'numParcela', field: 'numParcela', label: 'Nº Parcela', align: 'center', sortable: true },
