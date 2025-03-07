@@ -2,7 +2,7 @@
   <q-page padding>
     <div class="container">
       <p class="text-h6">
-        Cadastro de Assinaturas
+        Fechamento de Caixa
       </p>
       <br>
       <q-form @submit="onSubmit">
